@@ -23,7 +23,7 @@ counttarget = defaultdict(lambda: 0)
 countprefix = defaultdict(lambda: 0)
 countbackground = defaultdict(lambda: 0)
 
-stripNonAlphaNumRe = re.compile('[^\w \d]+')
+stripNonAlphaNumRe = re.compile('[^\w \d]+')	# This is incorrect, it will remove non-latin characters (unless python has a weird \w in regexes)
 
 def addWord(word, countmap, globalcountmap=None, count=1):
 	countmap[word] += count
@@ -76,7 +76,7 @@ for person in people:
 		for word in text.split(" "):
 			addWordOrNum(word, countbackground, countall)
 
-countall = sorted(countall.items(), key=operator.itemgetter(1))[:DISTINCT_WORDS]
+countall = sorted(countall.items(), key=operator.itemgetter(1), reverse=True)[:DISTINCT_WORDS]
 words = [w[0] for w in countall]
 states = [countbackground, countprefix, counttarget, countpostfix]
 def stateToBCol(state, words):
@@ -88,5 +88,10 @@ def stateToBCol(state, words):
 	return [float(count) / normalization for count in col]
 b = [stateToBCol(state, words) for state in states]
 
-for b2 in b:
-	print(b2)
+def countNonzero(b2):
+	c = 0
+	for b3 in b2:
+		c += 1 if b3 > 0 else 0
+	return c
+
+print([countNonzero(b2) for b2 in b])
