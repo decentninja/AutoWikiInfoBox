@@ -2,7 +2,8 @@ import json
 import sys
 import re
 import string
-
+import operator
+from collections import defaultdict
 
 def warning(str):
 	sys.stderr.write("\033[91m" + str + "\n\033[95m")
@@ -11,35 +12,31 @@ raw = sys.stdin.read()
 people = json.loads(raw)
 
 AROUND = 3
+DISTINCT_WORDS = 200
 
 property = sys.argv[1]
 type = sys.argv[2]
 
-allcount = {}
-allpostfix = {}		# word: count
-allprefix = {}
-allcorrect = {}
-allbackground = {}
+allcount = defaultdict(lambda: 0)
+allpostfix = defaultdict(lambda: 0)		# word: count
+alltarget = defaultdict(lambda: 0)
+allprefix = defaultdict(lambda: 0)
+allcorrect = defaultdict(lambda: 0)
+allbackground = defaultdict(lambda: 0)
 
 stripNonAlphaNumRe = re.compile('[^\w \d]+')
 
-def addWord(word, countmap, globalcountmap=None):
-	if word in countmap:
-		countmap[word] += 1
-	else:
-		countmap[word] = 1
-	if not globalcountmap:
+def addWord(word, countmap, globalcountmap=None, count=1):
+	countmap[word] += count
+	if globalcountmap == None:
 		return
-	if word in globalcountmap:
-		globalcountmap[word] += 1
-	else:
-		globalcountmap[word] = 1
+	globalcountmap[word] += count
 
-def addWordOrNum(won, countmap, globalcountmap=None):
+def addWordOrNum(won, countmap, globalcountmap=None, count=1):
 	if won.isalpha():
-		addWord(won, countmap, globalcountmap)
+		addWord(won, countmap, globalcountmap, count)
 	else:
-		addWord('1', countmap, globalcountmap)
+		addWord('1', countmap, globalcountmap, count)
 
 for person in people:
 	things = person[property].split(";")
@@ -52,18 +49,19 @@ for person in people:
 	else:
 		warning("Unknown type")
 	things = list(set(things))
-	text = person["description_en"]
-	text = stripNonAlphaNumRe.sub('', text).lower()
+	inittext = person["description_en"]
+	inittext = stripNonAlphaNumRe.sub('', inittext).lower()
 	for thing in things:
+		text = inittext;
+		foundCount = 0
 		try:
-			foundCount = 0
 			while True:
 				index = text.index(thing)
 				prefix = text[0:index]
 				text = text[index + len(thing):]
 				prefix = prefix.split(" ")
 				postfix = text.split(" ")[:AROUND]
-				text = text[" ".join(postfix).__len__:]
+				text = text[len(" ".join(postfix)):]
 				foundCount += 1
 				for word in postfix:
 					addWordOrNum(word, allpostfix, allcount)
@@ -74,7 +72,22 @@ for person in people:
 		except ValueError:
 			if foundCount == 0:
 				warning("\"" + thing + "\" not found in " + person["name"] + " abstract.")
+		for word in thing.split(" "):
+			addWordOrNum(word, alltarget, allcount, foundCount)
 		for word in text.split(" "):
 			addWordOrNum(word, allbackground, allcount)
 
+allcount = sorted(allcount.items(), key=operator.itemgetter(1))[:DISTINCT_WORDS]
+words = [w[0] for w in allcount]
+states = [allbackground, allprefix, alltarget, allpostfix]
+def stateToBCol(state, words):
+	col = [state[word] for word in words]
+	for word in words:
+		del state[word]
+	col.append(sum(state.values()))
+	normalization = sum(col)
+	return [float(count) / normalization for count in col]
+b = [stateToBCol(state, words) for state in states]
 
+for b2 in b:
+	print(b2)
