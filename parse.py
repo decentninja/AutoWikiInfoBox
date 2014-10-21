@@ -17,12 +17,11 @@ DISTINCT_WORDS = 200
 property = sys.argv[1]
 type = sys.argv[2]
 
-allcount = defaultdict(lambda: 0)
-allpostfix = defaultdict(lambda: 0)		# word: count
-alltarget = defaultdict(lambda: 0)
-allprefix = defaultdict(lambda: 0)
-allcorrect = defaultdict(lambda: 0)
-allbackground = defaultdict(lambda: 0)
+countall = defaultdict(lambda: 0)
+countpostfix = defaultdict(lambda: 0)		# word: count
+counttarget = defaultdict(lambda: 0)
+countprefix = defaultdict(lambda: 0)
+countbackground = defaultdict(lambda: 0)
 
 stripNonAlphaNumRe = re.compile('[^\w \d]+')
 
@@ -64,22 +63,22 @@ for person in people:
 				text = text[len(" ".join(postfix)):]
 				foundCount += 1
 				for word in postfix:
-					addWordOrNum(word, allpostfix, allcount)
+					addWordOrNum(word, countpostfix, countall)
 				for word in prefix[-AROUND:]:
-					addWordOrNum(word, allprefix, allcount)
+					addWordOrNum(word, countprefix, countall)
 				for word in prefix[:-AROUND]:
-					addWordOrNum(word, allbackground, allcount)
+					addWordOrNum(word, countbackground, countall)
 		except ValueError:
 			if foundCount == 0:
 				warning("\"" + thing + "\" not found in " + person["name"] + " abstract.")
 		for word in thing.split(" "):
-			addWordOrNum(word, alltarget, allcount, foundCount)
+			addWordOrNum(word, counttarget, countall, foundCount)
 		for word in text.split(" "):
-			addWordOrNum(word, allbackground, allcount)
+			addWordOrNum(word, countbackground, countall)
 
-allcount = sorted(allcount.items(), key=operator.itemgetter(1))[:DISTINCT_WORDS]
-words = [w[0] for w in allcount]
-states = [allbackground, allprefix, alltarget, allpostfix]
+countall = sorted(countall.items(), key=operator.itemgetter(1))[:DISTINCT_WORDS]
+words = [w[0] for w in countall]
+states = [countbackground, countprefix, counttarget, countpostfix]
 def stateToBCol(state, words):
 	col = [state[word] for word in words]
 	for word in words:
