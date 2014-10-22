@@ -5,6 +5,7 @@ import string
 import operator
 from collections import defaultdict
 
+
 def warning(s):
 	sys.stderr.write("\033[91m" + s + "\n\033[95m")
 
@@ -37,6 +38,11 @@ def addWordOrNum(won, countmap, globalcountmap=None, count=1):
 	else:
 		addWord('1', countmap, globalcountmap, count)
 
+backtoback = 0
+backtoprefix = 0
+targettotarget = 0
+targettopost = 0
+
 for person in people:
 	things = person[property].split(";")
 	if type == "date":	# List of dates
@@ -66,13 +72,18 @@ for person in people:
 					addWordOrNum(word, countpostfix, countall)
 				for word in prefix[-AROUND:]:
 					addWordOrNum(word, countprefix, countall)
+				backtoback += len(prefix[:-AROUND]) -1
+				backtoprefix += 1
 				for word in prefix[:-AROUND]:
 					addWordOrNum(word, countbackground, countall)
 		except ValueError:
 			if foundCount == 0:
 				warning("\"" + thing + "\" not found in " + person["name"] + " abstract.")
+		targettotarget += len(thing.split(" ")) -1
+		targettopost += 1
 		for word in thing.split(" "):
 			addWordOrNum(word, counttarget, countall, foundCount)
+		backtoback += len(text.split(" ")) -1
 		for word in text.split(" "):
 			addWordOrNum(word, countbackground, countall)
 
@@ -88,10 +99,29 @@ def stateToBCol(state, words):
 	return [float(count) / normalization for count in col]
 b = [stateToBCol(state, words) for state in states]
 
-def countNonzero(b2):
-	c = 0
-	for b3 in b2:
-		c += 1 if b3 > 0 else 0
-	return c
 
-print([countNonzero(b2) for b2 in b])
+s = 0.0 + backtoback + backtoprefix
+backtoback /= s
+backtoprefix /= s
+s = 0.0 + targettopost + targettotarget
+targettopost /= s
+targettotarget /= s
+a = [
+	[backtoback, backtoprefix, 0.0, 0.0],
+	[0.0, (AROUND-1.0)/AROUND, 1.0/AROUND, 0.0],
+	[0.0, 0.0, targettotarget, targettopost],
+	[1.0/AROUND, 0.0, 0.0, (AROUND-1.0)/AROUND]
+]
+
+q = [[1.0, 0.0, 0.0, 0.0]]
+
+def kattismatrix(matrix):
+	sys.stdout.write(str(len(matrix)) + " " + str(len(matrix[0])))
+	for r in matrix:
+		for c in r:
+			sys.stdout.write(" " + str(c))
+	sys.stdout.write("\n")
+
+kattismatrix(a)
+kattismatrix(b)
+kattismatrix(q)
