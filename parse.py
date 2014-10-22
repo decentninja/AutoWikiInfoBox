@@ -5,8 +5,8 @@ import string
 import operator
 from collections import defaultdict
 
-def warning(str):
-	sys.stderr.write("\033[91m" + str + "\n\033[95m")
+def warning(s):
+	sys.stderr.write("\033[91m" + s + "\n\033[95m")
 
 raw = sys.stdin.read()
 people = json.loads(raw)
@@ -23,7 +23,7 @@ counttarget = defaultdict(lambda: 0)
 countprefix = defaultdict(lambda: 0)
 countbackground = defaultdict(lambda: 0)
 
-stripNonAlphaNumRe = re.compile('[^\w \d]+')	# This is incorrect, it will remove non-latin characters (unless python has a weird \w in regexes)
+stripNonAlphaNumRe = re.compile('[^\w\- \d]+')	# This is incorrect, it will remove non-latin characters (unless python has a weird \w in regexes)
 
 def addWord(word, countmap, globalcountmap=None, count=1):
 	countmap[word] += count
