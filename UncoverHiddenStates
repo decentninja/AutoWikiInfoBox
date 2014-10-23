@@ -1,0 +1,21 @@
+#!/usr/local/bin/WolframScript -script 
+
+InputToMatrix = Function[ in,
+    t = StringSplit[in];
+    width = ToExpression[t[[1]]];
+    height = ToExpression[t[[2]]];
+    t = Drop[t, 2];
+    Table[ToExpression[ t[[(x - 1)*height + 1 ;; x*height]]], {x, width}]
+];
+InputToList = Function[ in,
+    t = StringSplit[in];
+    l = ToExpression[t[[1]]];
+    ToExpression[t[[2 ;; (l + 1)]]]
+];
+
+a = InputToMatrix[InputString[]]
+b = InputToMatrix[InputString[]]
+v = InputToMatrix[InputString[]]
+o = InputToList[InputString[]]
+hmm = HiddenMarkovProcess[v[[1]], Transpose[a], Transpose[b]]
+Print[FindHiddenMarkovStates[o, hmm]-1]
