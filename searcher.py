@@ -33,7 +33,10 @@ wordlist = indata[4]
 
 states = ["back", "pre", "target", "post"]
 
-hmm = subprocess.Popen(["/Applications/Mathematica.app/Contents/MacOS/MathematicaScript", "-script", "UncoverHiddenStates"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+hmm = subprocess.Popen(["./searcher"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+hits = 0
+incorrect = 0
+misses = 0
 try:
 	kattismatrix(a, hmm.stdin)
 	kattismatrix(b, hmm.stdin)
@@ -42,17 +45,27 @@ try:
 	for person in people:
 		text = person["description_en"]
 		tokens = tokenizer.tokenize(text)
-		hmm.stdin.write(str(len(tokens)) + " " + " ".join([str(toState(token, wordlist)) for token in tokens]))
+		hmm.stdin.write(str(len(tokens)) + " " + " ".join([str(toState(token, wordlist)) for token in tokens]) + "\n")
 		result = hmm.stdout.readline()
-		print(result)
 		result = [int(word) for word in result.split(" ")]
-		print(person["name"] + " should be born " + person[property])
+		year = person[property][:4]
+		sys.stdout.write(year)
+		hasHit = False
 		for i, state in enumerate(result):
 			if state == 2:
+				hasHit = True
 				sys.stdout.write(" " + tokens[i])
+				if year == tokens[i]:
+					hits += 1
+				else:
+					incorrect += 1
+		if not hasHit:
+			misses += 1
 		sys.stdout.write("\n")
-except:
-	pass
 finally:
 	hmm.stdin.close()
 	hmm.terminate()
+print("num people: " + str(len(people)))
+print("hits: " + str(hits))
+print("incorrect: " + str(incorrect))
+print("misses: " + str(misses))
