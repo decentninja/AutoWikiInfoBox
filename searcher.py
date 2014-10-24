@@ -34,20 +34,25 @@ wordlist = indata[4]
 states = ["back", "pre", "target", "post"]
 
 hmm = subprocess.Popen(["/Applications/Mathematica.app/Contents/MacOS/MathematicaScript", "-script", "UncoverHiddenStates"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-kattismatrix(a, hmm.stdin)
-kattismatrix(b, hmm.stdin)
-kattismatrix(q, hmm.stdin)
+try:
+	kattismatrix(a, hmm.stdin)
+	kattismatrix(b, hmm.stdin)
+	kattismatrix(q, hmm.stdin)
 
-for person in people:
-	text = person["description_en"]
-	tokens = tokenizer.tokenize(text)
-	hmm.stdin.write(" ".join([str(toState(token, wordlist)) for token in tokens]))
-	result = hmm.stdout.readline()
-	print(result)
-	result = [int(word) for word in result.split(" ")]
-	print(person["name"] + " should be born " + person[property])
-	for i, state in enumerate(result):
-		if state == 2:
-			sys.stdout.write(" " + tokens[i])
-	sys.stdout.write("\n")
-
+	for person in people:
+		text = person["description_en"]
+		tokens = tokenizer.tokenize(text)
+		hmm.stdin.write(" ".join([str(toState(token, wordlist)) for token in tokens]))
+		result = hmm.stdout.readline()
+		print(result)
+		result = [int(word) for word in result.split(" ")]
+		print(person["name"] + " should be born " + person[property])
+		for i, state in enumerate(result):
+			if state == 2:
+				sys.stdout.write(" " + tokens[i])
+		sys.stdout.write("\n")
+except:
+	pass
+finally:
+	hmm.stdin.close()
+	hmm.terminate()
