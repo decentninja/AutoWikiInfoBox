@@ -15,7 +15,9 @@ InputToList = Function[ in,
 
 a = InputToMatrix[InputString[]]
 b = InputToMatrix[InputString[]]
-v = InputToMatrix[InputString[]]
-o = InputToList[InputString[]]
-hmm = HiddenMarkovProcess[v[[1]], Transpose[a], Transpose[b]]
-Print[FindHiddenMarkovStates[o, hmm]-1]
+q = InputToMatrix[InputString[]]
+While[True, 
+	o = InputToList[InputString[]]
+	hmm = HiddenMarkovProcess[q[[1]], Transpose[a], Transpose[b]]	(* May not need Transpose's *)
+	Print[FindHiddenMarkovStates[o, hmm]-1]
+]
