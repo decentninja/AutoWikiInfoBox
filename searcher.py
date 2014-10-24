@@ -42,7 +42,7 @@ try:
 	for person in people:
 		text = person["description_en"]
 		tokens = tokenizer.tokenize(text)
-		hmm.stdin.write(" ".join([str(toState(token, wordlist)) for token in tokens]))
+		hmm.stdin.write(str(len(tokens)) + " " + " ".join([str(toState(token, wordlist)) for token in tokens]))
 		result = hmm.stdout.readline()
 		print(result)
 		result = [int(word) for word in result.split(" ")]
