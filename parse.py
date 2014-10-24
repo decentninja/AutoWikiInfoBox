@@ -115,13 +115,8 @@ a = [
 
 q = [[1.0, 0.0, 0.0, 0.0]]
 
-def kattismatrix(matrix):
-	sys.stdout.write(str(len(matrix)) + " " + str(len(matrix[0])))
-	for r in matrix:
-		for c in r:
-			sys.stdout.write(" " + str(c))
-	sys.stdout.write("\n")
+print(json.dumps(a))
+print(json.dumps(b))
+print(json.dumps(q))
+print(json.dumps(words))
 
-kattismatrix(a)
-kattismatrix(b)
-kattismatrix(q)
