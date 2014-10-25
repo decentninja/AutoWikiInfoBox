@@ -4,11 +4,9 @@ import re
 import string
 import operator
 from collections import defaultdict
+from helpers import warning
 import helpers
 
-
-def warning(s):
-	sys.stderr.write("\033[91m" + s + "\n\033[95m")
 
 raw = sys.stdin.read()
 people = json.loads(raw)

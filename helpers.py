@@ -1,4 +1,5 @@
 import re
+import sys
 
 
 def tokenize(text):
@@ -16,3 +17,6 @@ def extract(thing, type):
 	else:
 		warning("Unknown type")
 	return thing
+
+def warning(s):
+	sys.stderr.write("\033[91m" + s + "\n\033[95m")
