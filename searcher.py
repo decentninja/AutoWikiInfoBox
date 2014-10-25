@@ -1,7 +1,6 @@
 import json
 import sys
 import subprocess
-import tokenizer
 import helpers
 
 def toState(token, wordlist):
@@ -46,7 +45,7 @@ try:
 
 	for person in people:
 		text = person["description_en"]
-		tokens = tokenizer.tokenize(text)
+		tokens = helpers.tokenize(text)
 		hmm.stdin.write(str(len(tokens)) + " " + " ".join([str(toState(token, wordlist)) for token in tokens]) + "\n")
 		result = hmm.stdout.readline()
 		result = [int(word) for word in result.split(" ")]
