@@ -1,13 +1,17 @@
-test: birthyeartest
+# Default property
+# Can be changed with "make test property=parent type=link" for example
+# More properties can be found at http://dbpedia.org/ontology/Person
+property = birthYear
+type = date
 
-birthyeartest: data/birthyear.json data/birthYearHmmdata.json viterbi
-	cat data/birthYear.json data/birthYearHmmdata.json | python2.7 searcher.py birthYear
+test: data/$(property).json data/$(property)Hmmdata.json viterbi
+	cat data/$(property).json data/$(property)Hmmdata.json | python2.7 searcher.py $(property) $(type)
 
-data/birthyear.json:
-	python2.7 query.py birthYear 1000 > data/birthyear.json
+data/$(property).json:
+	python2.7 query.py $(property) 10000 > data/$(property).json
 
-data/birthYearHmmdata.json: data/birthyear.json
-	cat data/birthYear.json | python2.7 parse.py birthYear date > data/birthYearHmmdata.json
+data/$(property)Hmmdata.json: data/$(property).json
+	cat data/$(property).json | python2.7 parse.py $(property) $(type) > data/$(property)Hmmdata.json
 
 clean:
 	rm data/*

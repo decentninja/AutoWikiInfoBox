@@ -4,6 +4,7 @@ import re
 import string
 import operator
 from collections import defaultdict
+import helpers
 
 
 def warning(s):
@@ -45,14 +46,7 @@ targettopost = 0
 
 for person in people:
 	things = person[property].split(";")
-	if type == "date":	# List of dates
-		things = map(lambda x: x[0:4], things)
-	elif type == "link":	# List of links
-		things = map(lambda x: x.split("/")[-1].replace("_", " "), things)
-	elif type == "string":
-		pass
-	else:
-		warning("Unknown type")
+	things = map(lambda x: helpers.extract(x, type), things)
 	things = list(set(things))
 	inittext = person["description_en"]
 	inittext = stripNonAlphaNumRe.sub('', inittext).lower()
