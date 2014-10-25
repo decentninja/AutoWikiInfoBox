@@ -45,39 +45,50 @@ targettopost = 0
 for person in people:
 	things = person[property].split(";")
 	things = map(lambda x: helpers.extract(x, type), things)
-	things = list(set(things))
-	inittext = person["description_en"]
-	inittext = stripNonAlphaNumRe.sub('', inittext).lower()
-	for thing in things:
-		text = inittext;
-		foundCount = 0
-		try:
-			while True:
-				index = text.index(thing)
-				prefix = text[0:index]
-				text = text[index + len(thing):]
-				prefix = prefix.split(" ")
-				postfix = text.split(" ")[:AROUND]
-				text = text[len(" ".join(postfix)):]
-				foundCount += 1
-				for word in postfix:
-					addWordOrNum(word, countpostfix, countall)
-				for word in prefix[-AROUND:]:
-					addWordOrNum(word, countprefix, countall)
-				backtoback += len(prefix[:-AROUND]) -1
-				backtoprefix += 1
-				for word in prefix[:-AROUND]:
-					addWordOrNum(word, countbackground, countall)
-		except ValueError:
-			if foundCount == 0:
-				warning("\"" + thing + "\" not found in " + person["name"] + " abstract.")
-		targettotarget += len(thing.split(" ")) -1
-		targettopost += 1
-		for word in thing.split(" "):
-			addWordOrNum(word, counttarget, countall, foundCount)
-		backtoback += len(text.split(" ")) -1
-		for word in text.split(" "):
-			addWordOrNum(word, countbackground, countall)
+	things = [helpers.tokenize(thing) for thing in list(set(things))]
+	thingsFound = [0 for thing in things]
+	text = helpers.tokenize(person["description_en"])
+	prevPostEnd = 0
+	currWord = 0
+	while currWord < len(text):
+		for i, thing in enumerate(things):
+			if thing[thingsFound[i]] != text[currWord]:
+				thingsFound[i] = 0
+				continue
+			thingsFound[i] += 1
+			if thingsFound[i] < len(thing):
+				continue
+
+			start = currWord - len(thing) + 1
+
+			backtoback += max(0, start - AROUND) - prevPostEnd - 1
+			for word in text[prevPostEnd : max(0, start - AROUND)]:
+				addWordOrNum(word, countbackground)
+
+			backtoprefix += 1
+			for word in text[max(0, start - AROUND):max(0, start)]:
+				addWordOrNum(word, countprefix, countall)
+
+			targettotarget += currWord+1 - start - 1
+			for word in text[start : currWord+1]:
+				addWordOrNum(word, counttarget, countall)
+
+			targettopost += 1
+			prevPostEnd = min(len(text), currWord + AROUND + 1)
+			for word in text[currWord+1 : prevPostEnd]:
+				addWordOrNum(word, countpostfix, countall)
+
+			currWord = prevPostEnd - 1
+			for j in range(0, len(thingsFound)):
+				thingsFound[j] = 0
+			break
+		currWord += 1
+
+	if prevPostEnd == 0:
+		helpers.warning("None of \"" + (",".join([" ".join(t) for t in things])) + "\" found in " + person["name"] + " abstract.")
+	backtoback += len(text) - prevPostEnd
+	for word in text[prevPostEnd : len(text)]:
+		addWordOrNum(word, countbackground)
 
 countall = sorted(countall.items(), key=operator.itemgetter(1), reverse=True)[:DISTINCT_WORDS]
 words = [w[0] for w in countall]
