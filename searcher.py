@@ -76,7 +76,7 @@ try:
 			debugstyle = ""
 			if tokens[i] in values:
 				debugstyle += '\033[4m'
-			if tokens[i] == regexguess:
+			if regexguess and tokens[i] == regexguess:
 				debugstyle += "r"
 			if state == 1:
 				debugstyle += '\033[90m'
