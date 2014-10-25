@@ -16,6 +16,7 @@ data/$(property)Hmmdata.json: data/$(property).json
 clean:
 	rm data/*
 	rm viterbi
+	rm *.pyc
 
 viterbi: anotherhmmthing/viterbi.cpp
 	g++ anotherhmmthing/viterbi.cpp -Wall -std=c++11 -g -o viterbi
