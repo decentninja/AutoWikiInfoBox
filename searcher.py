@@ -33,7 +33,7 @@ wordlist = indata[4]
 
 states = ["back", "pre", "target", "post"]
 
-hmm = subprocess.Popen(["./searcher"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+hmm = subprocess.Popen(["./viterbi"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 hits = 0
 incorrect = 0
 misses = 0

@@ -1,7 +1,6 @@
 test: birthyeartest
 
-
-birthyeartest: data/birthyear.json data/birthYearHmmdata.json searcher
+birthyeartest: data/birthyear.json data/birthYearHmmdata.json viterbi
 	cat data/birthYear.json data/birthYearHmmdata.json | python2.7 searcher.py birthYear
 
 data/birthyear.json:
@@ -12,10 +11,7 @@ data/birthYearHmmdata.json: data/birthyear.json
 
 clean:
 	rm data/*
-	rm searcher
+	rm viterbi
 
-searcher: anotherhmmthing/searcher.cpp
-	g++ anotherhmmthing/searcher.cpp -Wall -std=c++11 -g -o searcher
-
-testsearcher: searcher data/bla
-	./searcher < data/bla
+viterbi: anotherhmmthing/viterbi.cpp
+	g++ anotherhmmthing/viterbi.cpp -Wall -std=c++11 -g -o viterbi
