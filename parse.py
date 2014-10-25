@@ -85,7 +85,7 @@ for person in people:
 		currWord += 1
 
 	if prevPostEnd == 0:
-		helpers.warning("None of \"" + (",".join([" ".join(t) for t in things])) + "\" found in " + person["name"] + " abstract.")
+		warning("None of \"" + (",".join([" ".join(t) for t in things])) + "\" found in " + person["name"] + " abstract.")
 	backtoback += len(text) - prevPostEnd
 	for word in text[prevPostEnd : len(text)]:
 		addWordOrNum(word, countbackground)
