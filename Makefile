@@ -14,6 +14,11 @@ data/$(property)Hmmdata.json: data/$(property).json
 	cat data/$(property).json | python2.7 parse.py $(property) $(type) > data/$(property)Hmmdata.json
 
 clean:
+	rm data/*Hmmdata.json
+	rm viterbi
+	rm *.pyc
+
+cleanall:
 	rm data/*
 	rm viterbi
 	rm *.pyc
