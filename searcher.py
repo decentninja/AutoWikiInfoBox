@@ -2,6 +2,10 @@ import json
 import sys
 import subprocess
 import helpers
+import re
+
+
+pattern=re.compile("[0-9]{4}")		# Regex for comparison
 
 def toState(token, wordlist):
 	try:
@@ -38,6 +42,9 @@ hmm = subprocess.Popen(["./viterbi"], stdin=subprocess.PIPE, stdout=subprocess.P
 hits = 0
 incorrect = 0
 notfound = 0
+regexnotfound = 0
+regexincorrect = 0
+regexhits = 0
 try:
 	kattismatrix(a, hmm.stdin)
 	kattismatrix(b, hmm.stdin)
@@ -52,11 +59,25 @@ try:
 		values = [helpers.extract(x, type) for x in person[property].split(";")]
 		weguessed = False
 		correct = False
+
+		# The regex guess
+		r = pattern.search(person["description_en"])
+		if r:
+			regexguess = r.group(0)
+			if regexguess in values:
+				regexhits += 1
+			else:
+				regexincorrect += 1
+		else:
+			regexnotfound += 1
+
 		debug = ""
 		for i, state in enumerate(result):
 			debugstyle = ""
 			if tokens[i] in values:
 				debugstyle += '\033[4m'
+			if tokens[i] == regexguess:
+				debugstyle += "r"
 			if state == 1:
 				debugstyle += '\033[90m'
 			if state == 2:
@@ -81,10 +102,12 @@ try:
 		else:
 			print("\033[93mIncorrect:\033[0m " + debug)
 			incorrect += 1
+
 finally:
 	hmm.stdin.close()
 	hmm.terminate()
-print("Num people: " + str(len(people)))
-print("Correct: " + str(hits))
-print("Incorrect: " + str(incorrect))
-print("Not found: " + str(notfound))
+print("Stat        HMM\t\tRegex")
+print("Correct:    " + str(hits)) + "\t\t" + str(regexhits)
+print("Incorrect:  " + str(incorrect)) + "\t" + str(regexincorrect)
+print("Not found:  " + str(notfound)) + "\t\t" + str(regexnotfound)
+print("Total num people: " + str(len(people)))
