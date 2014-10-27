@@ -90,10 +90,17 @@ try:
 			if state == 2:
 				weguessed = True
 				ourguess += (tokens[i]+" ")
-
+		
 		for value in values:
-			if ourguess.find(value.lower()) != -1:
-				correct = True
+			correct = True
+			for word in re.split('\W+', value.lower()):
+				if (word=='actor' or word=='actress'):
+					if ourguess.find('actor')== -1 and ourguess.find('actress') == -1:
+						correct = False
+				elif (word != 'and') and ourguess.find(word) == -1:
+					correct = False
+			if correct:
+				break
 		debug += "\n"
 
 		
