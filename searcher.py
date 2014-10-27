@@ -72,6 +72,7 @@ try:
 			regexnotfound += 1
 
 		debug = ""
+		ourguess = ""
 		for i, state in enumerate(result):
 			debugstyle = ""
 			if tokens[i] in values:
@@ -88,11 +89,14 @@ try:
 
 			if state == 2:
 				weguessed = True
-				ourguess = tokens[i]
-				for value in values:
-					if value == tokens[i]:
-						correct = True
+				ourguess += (tokens[i]+" ")
+
+		for value in values:
+			if ourguess.find(value.lower()) != -1:
+				correct = True
 		debug += "\n"
+
+		
 		if not weguessed:
 			notfound += 1
 			print("\033[92mNot found: \033[0m" + debug)
@@ -101,6 +105,8 @@ try:
 			print("\033[4m\033[91mCorrect\033[0m: " + debug)
 		else:
 			print("\033[93mIncorrect:\033[0m " + debug)
+			print map(lambda s: s.lower(), values),
+			print("\n")
 			incorrect += 1
 
 finally:
