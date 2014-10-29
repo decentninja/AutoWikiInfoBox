@@ -50,7 +50,11 @@ try:
 	kattismatrix(b, hmm.stdin)
 	kattismatrix(q, hmm.stdin)
 
+	run = False
 	for person in people:
+		run = not run
+		if run:
+			continue
 		text = person["description_en"]
 		tokens = helpers.tokenize(text)
 		hmm.stdin.write(str(len(tokens)) + " " + " ".join([str(toState(token, wordlist)) for token in tokens]) + "\n")
@@ -62,6 +66,7 @@ try:
 
 		# The regex guess
 		r = pattern.search(person["description_en"])
+		regexguess = None
 		if r:
 			regexguess = r.group(0)
 			if regexguess in values:
@@ -90,7 +95,7 @@ try:
 			if state == 2:
 				weguessed = True
 				ourguess += (tokens[i]+" ")
-		
+
 		for value in values:
 			correct = True
 			for word in re.split('\W+', value.lower()):
@@ -103,7 +108,7 @@ try:
 				break
 		debug += "\n"
 
-		
+
 		if not weguessed:
 			notfound += 1
 			print("\033[92mNot found: \033[0m" + debug)
@@ -123,4 +128,4 @@ print("Stat        HMM\t\tRegex")
 print("Correct:    " + str(hits)) + "\t\t" + str(regexhits)
 print("Incorrect:  " + str(incorrect)) + "\t" + str(regexincorrect)
 print("Not found:  " + str(notfound)) + "\t\t" + str(regexnotfound)
-print("Total num people: " + str(len(people)))
+print("Total num people searched: " + str(len(people)/2))

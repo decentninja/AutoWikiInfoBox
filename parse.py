@@ -42,7 +42,11 @@ backtoprefix = 0
 targettotarget = 0
 targettopost = 0
 
+run = True
 for person in people:
+	run = not run
+	if run:
+		continue
 	things = person[property].split(";")
 	things = map(lambda x: helpers.extract(x, type), things)
 	things = [helpers.tokenize(thing) for thing in list(set(things))]
