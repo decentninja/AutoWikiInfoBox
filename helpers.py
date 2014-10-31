@@ -1,10 +1,16 @@
 import re
 import sys
 
-
 def tokenize(text):
+	text = text.lower()
+	
+	text = re.sub(',', ' COMMA ', text)
+	text = re.sub('\.', ' DOT ', text)
+	text = re.sub('\(', ' OPENBRACKET ', text)
+	text = re.sub('\)', ' CLOSEBRACKET ', text)
+	
 	stripNonAlphaNumRe = re.compile('[^\w\- \d]+')
-	text = stripNonAlphaNumRe.sub('', text).lower()
+	text = stripNonAlphaNumRe.sub('', text)
 	return text.split(" ")
 
 def extract(thing, type):
