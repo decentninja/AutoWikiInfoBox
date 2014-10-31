@@ -1,9 +1,10 @@
 import re
 import sys
 
+stripNonAlphaNumRe = re.compile('[^\w\- \d]+')
 def tokenize(text):
 	text = text.lower()
-	
+
 	text = re.sub(',', ' COMMA ', text)
 	text = re.sub('\.', ' DOT ', text)
 	text = re.sub('\(', ' OPENBRACKET ', text)
@@ -11,9 +12,8 @@ def tokenize(text):
 	text = re.sub(u'\u2013',' ENDASH ',text)
 	text = re.sub(u'\u2012',' FIGDASH ',text)
 
-	stripNonAlphaNumRe = re.compile('[^\w\- \d]+')
-	text = stripNonAlphaNumRe.sub('', text)
-	return text.split(" ")
+	text = stripNonAlphaNumRe.sub(' ', text)
+	return text.split()
 
 def extract(thing, type):
 	if type == "date":	# List of dates
