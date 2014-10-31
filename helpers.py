@@ -8,7 +8,9 @@ def tokenize(text):
 	text = re.sub('\.', ' DOT ', text)
 	text = re.sub('\(', ' OPENBRACKET ', text)
 	text = re.sub('\)', ' CLOSEBRACKET ', text)
-	
+	text = re.sub(u'\u2013',' ENDASH ',text)
+	text = re.sub(u'\u2012',' FIGDASH ',text)
+
 	stripNonAlphaNumRe = re.compile('[^\w\- \d]+')
 	text = stripNonAlphaNumRe.sub('', text)
 	return text.split(" ")
