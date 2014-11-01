@@ -1,0 +1,18 @@
+# Dependencies
+
+- Python 2.7
+- A c++11 compliant compiler that can be invoked with g++
+- make
+
+# Running
+
+Make will handle pretty much everything, including building the c++
+implementation of HMMs. Below are commands for three example runs with
+different fields. `ns` specifies the namespace on DBpedia to which the property
+belongs. This defaults to dbo. `property` is the name of the field on DBpedia.
+
+```bash
+make ns=dc property=description type=string
+make property=deathYear type=date
+make property=birthYear type=date
+```
