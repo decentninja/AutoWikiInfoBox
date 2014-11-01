@@ -23,8 +23,6 @@ counttarget = defaultdict(lambda: 0)
 countprefix = defaultdict(lambda: 0)
 countbackground = defaultdict(lambda: 0)
 
-stripNonAlphaNumRe = re.compile('[^\w\- \d]+')	# This is incorrect, it will remove non-latin characters (unless python has a weird \w in regexes)
-
 def addWord(word, countmap, globalcountmap=None, count=1):
 	countmap[word] += count
 	if globalcountmap == None:
